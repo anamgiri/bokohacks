@@ -1,0 +1,180 @@
+2025-02-28 10:57:26,632 - INFO - No existing tables found. Creating new tables securely...
+2025-02-28 10:57:26,794 - WARNING - 
+users table does not exist!
+2025-02-28 10:57:26,794 - WARNING - 
+notes table does not exist!
+2025-02-28 10:57:26,794 - WARNING - 
+admin_credentials table does not exist!
+2025-02-28 10:57:26,794 - WARNING - 
+files table does not exist!
+2025-02-28 10:57:49,090 - INFO - Existing tables found: ['admin_credentials', 'files', 'notes', 'users']
+2025-02-28 10:57:49,090 - INFO - Updated schema with any new tables.
+2025-02-28 10:57:49,090 - INFO - 
+Users table columns:
+2025-02-28 10:57:49,090 - INFO - - id: INTEGER
+2025-02-28 10:57:49,090 - INFO - - username: VARCHAR(150)
+2025-02-28 10:57:49,090 - INFO - - password_hash: VARCHAR(200)
+2025-02-28 10:57:49,090 - INFO - 
+Notes table columns:
+2025-02-28 10:57:49,091 - INFO - - id: INTEGER
+2025-02-28 10:57:49,091 - INFO - - title: VARCHAR(200)
+2025-02-28 10:57:49,091 - INFO - - content: TEXT
+2025-02-28 10:57:49,091 - INFO - - created_at: DATETIME
+2025-02-28 10:57:49,091 - INFO - - user_id: INTEGER
+2025-02-28 10:57:49,091 - INFO - 
+Admin_credentials table columns:
+2025-02-28 10:57:49,091 - INFO - - id: INTEGER
+2025-02-28 10:57:49,091 - INFO - - user_id: INTEGER
+2025-02-28 10:57:49,091 - INFO - - is_default: BOOLEAN
+2025-02-28 10:57:49,091 - INFO - 
+Files table columns:
+2025-02-28 10:57:49,091 - INFO - - id: INTEGER
+2025-02-28 10:57:49,091 - INFO - - filename: VARCHAR(200)
+2025-02-28 10:57:49,091 - INFO - - file_path: VARCHAR(500)
+2025-02-28 10:57:49,091 - INFO - - uploaded_at: DATETIME
+2025-02-28 10:57:49,091 - INFO - - user_id: INTEGER
+2025-02-28 10:57:49,393 - INFO - Existing tables found: ['admin_credentials', 'files', 'notes', 'users']
+2025-02-28 10:57:49,393 - INFO - Updated schema with any new tables.
+2025-02-28 10:57:49,393 - INFO - 
+Users table columns:
+2025-02-28 10:57:49,393 - INFO - - id: INTEGER
+2025-02-28 10:57:49,393 - INFO - - username: VARCHAR(150)
+2025-02-28 10:57:49,393 - INFO - - password_hash: VARCHAR(200)
+2025-02-28 10:57:49,393 - INFO - 
+Notes table columns:
+2025-02-28 10:57:49,393 - INFO - - id: INTEGER
+2025-02-28 10:57:49,394 - INFO - - title: VARCHAR(200)
+2025-02-28 10:57:49,394 - INFO - - content: TEXT
+2025-02-28 10:57:49,394 - INFO - - created_at: DATETIME
+2025-02-28 10:57:49,394 - INFO - - user_id: INTEGER
+2025-02-28 10:57:49,394 - INFO - 
+Admin_credentials table columns:
+2025-02-28 10:57:49,394 - INFO - - id: INTEGER
+2025-02-28 10:57:49,394 - INFO - - user_id: INTEGER
+2025-02-28 10:57:49,394 - INFO - - is_default: BOOLEAN
+2025-02-28 10:57:49,394 - INFO - 
+Files table columns:
+2025-02-28 10:57:49,394 - INFO - - id: INTEGER
+2025-02-28 10:57:49,394 - INFO - - filename: VARCHAR(200)
+2025-02-28 10:57:49,394 - INFO - - file_path: VARCHAR(500)
+2025-02-28 10:57:49,394 - INFO - - uploaded_at: DATETIME
+2025-02-28 10:57:49,394 - INFO - - user_id: INTEGER
+2025-02-28 10:57:58,359 - INFO - Existing tables found: ['admin_credentials', 'files', 'notes', 'users']
+2025-02-28 10:57:58,359 - INFO - Updated schema with any new tables.
+2025-02-28 10:57:58,359 - INFO - 
+Users table columns:
+2025-02-28 10:57:58,359 - INFO - - id: INTEGER
+2025-02-28 10:57:58,359 - INFO - - username: VARCHAR(150)
+2025-02-28 10:57:58,359 - INFO - - password_hash: VARCHAR(200)
+2025-02-28 10:57:58,359 - INFO - 
+Notes table columns:
+2025-02-28 10:57:58,360 - INFO - - id: INTEGER
+2025-02-28 10:57:58,360 - INFO - - title: VARCHAR(200)
+2025-02-28 10:57:58,360 - INFO - - content: TEXT
+2025-02-28 10:57:58,360 - INFO - - created_at: DATETIME
+2025-02-28 10:57:58,360 - INFO - - user_id: INTEGER
+2025-02-28 10:57:58,360 - INFO - 
+Admin_credentials table columns:
+2025-02-28 10:57:58,360 - INFO - - id: INTEGER
+2025-02-28 10:57:58,360 - INFO - - user_id: INTEGER
+2025-02-28 10:57:58,360 - INFO - - is_default: BOOLEAN
+2025-02-28 10:57:58,360 - INFO - 
+Files table columns:
+2025-02-28 10:57:58,360 - INFO - - id: INTEGER
+2025-02-28 10:57:58,360 - INFO - - filename: VARCHAR(200)
+2025-02-28 10:57:58,360 - INFO - - file_path: VARCHAR(500)
+2025-02-28 10:57:58,360 - INFO - - uploaded_at: DATETIME
+2025-02-28 10:57:58,360 - INFO - - user_id: INTEGER
+2025-02-28 10:57:58,364 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5001
+ * Running on http://10.216.31.207:5001
+2025-02-28 10:57:58,364 - INFO - [33mPress CTRL+C to quit[0m
+2025-02-28 10:58:22,484 - INFO - Existing tables found: ['admin_credentials', 'files', 'notes', 'users']
+2025-02-28 10:58:22,484 - INFO - Updated schema with any new tables.
+2025-02-28 10:58:22,484 - INFO - 
+Users table columns:
+2025-02-28 10:58:22,484 - INFO - - id: INTEGER
+2025-02-28 10:58:22,485 - INFO - - username: VARCHAR(150)
+2025-02-28 10:58:22,485 - INFO - - password_hash: VARCHAR(200)
+2025-02-28 10:58:22,485 - INFO - 
+Notes table columns:
+2025-02-28 10:58:22,485 - INFO - - id: INTEGER
+2025-02-28 10:58:22,485 - INFO - - title: VARCHAR(200)
+2025-02-28 10:58:22,485 - INFO - - content: TEXT
+2025-02-28 10:58:22,485 - INFO - - created_at: DATETIME
+2025-02-28 10:58:22,485 - INFO - - user_id: INTEGER
+2025-02-28 10:58:22,485 - INFO - 
+Admin_credentials table columns:
+2025-02-28 10:58:22,485 - INFO - - id: INTEGER
+2025-02-28 10:58:22,485 - INFO - - user_id: INTEGER
+2025-02-28 10:58:22,485 - INFO - - is_default: BOOLEAN
+2025-02-28 10:58:22,485 - INFO - 
+Files table columns:
+2025-02-28 10:58:22,485 - INFO - - id: INTEGER
+2025-02-28 10:58:22,485 - INFO - - filename: VARCHAR(200)
+2025-02-28 10:58:22,485 - INFO - - file_path: VARCHAR(500)
+2025-02-28 10:58:22,485 - INFO - - uploaded_at: DATETIME
+2025-02-28 10:58:22,485 - INFO - - user_id: INTEGER
+2025-02-28 10:59:03,521 - INFO - Existing tables found: ['admin_credentials', 'files', 'notes', 'users']
+2025-02-28 10:59:03,521 - INFO - Updated schema with any new tables.
+2025-02-28 10:59:03,521 - INFO - 
+Users table columns:
+2025-02-28 10:59:03,522 - INFO - - id: INTEGER
+2025-02-28 10:59:03,522 - INFO - - username: VARCHAR(150)
+2025-02-28 10:59:03,522 - INFO - - password_hash: VARCHAR(200)
+2025-02-28 10:59:03,522 - INFO - 
+Notes table columns:
+2025-02-28 10:59:03,522 - INFO - - id: INTEGER
+2025-02-28 10:59:03,522 - INFO - - title: VARCHAR(200)
+2025-02-28 10:59:03,522 - INFO - - content: TEXT
+2025-02-28 10:59:03,522 - INFO - - created_at: DATETIME
+2025-02-28 10:59:03,522 - INFO - - user_id: INTEGER
+2025-02-28 10:59:03,522 - INFO - 
+Admin_credentials table columns:
+2025-02-28 10:59:03,522 - INFO - - id: INTEGER
+2025-02-28 10:59:03,522 - INFO - - user_id: INTEGER
+2025-02-28 10:59:03,522 - INFO - - is_default: BOOLEAN
+2025-02-28 10:59:03,522 - INFO - 
+Files table columns:
+2025-02-28 10:59:03,522 - INFO - - id: INTEGER
+2025-02-28 10:59:03,522 - INFO - - filename: VARCHAR(200)
+2025-02-28 10:59:03,522 - INFO - - file_path: VARCHAR(500)
+2025-02-28 10:59:03,522 - INFO - - uploaded_at: DATETIME
+2025-02-28 10:59:03,522 - INFO - - user_id: INTEGER
+2025-02-28 10:59:03,526 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:8000
+ * Running on http://10.216.31.207:8000
+2025-02-28 10:59:03,526 - INFO - [33mPress CTRL+C to quit[0m
+2025-02-28 10:59:40,087 - INFO - Existing tables found: ['admin_credentials', 'files', 'notes', 'users']
+2025-02-28 10:59:40,088 - INFO - Updated schema with any new tables.
+2025-02-28 10:59:40,088 - INFO - 
+Users table columns:
+2025-02-28 10:59:40,088 - INFO - - id: INTEGER
+2025-02-28 10:59:40,088 - INFO - - username: VARCHAR(150)
+2025-02-28 10:59:40,088 - INFO - - password_hash: VARCHAR(200)
+2025-02-28 10:59:40,088 - INFO - 
+Notes table columns:
+2025-02-28 10:59:40,088 - INFO - - id: INTEGER
+2025-02-28 10:59:40,088 - INFO - - title: VARCHAR(200)
+2025-02-28 10:59:40,088 - INFO - - content: TEXT
+2025-02-28 10:59:40,088 - INFO - - created_at: DATETIME
+2025-02-28 10:59:40,088 - INFO - - user_id: INTEGER
+2025-02-28 10:59:40,088 - INFO - 
+Admin_credentials table columns:
+2025-02-28 10:59:40,088 - INFO - - id: INTEGER
+2025-02-28 10:59:40,088 - INFO - - user_id: INTEGER
+2025-02-28 10:59:40,088 - INFO - - is_default: BOOLEAN
+2025-02-28 10:59:40,088 - INFO - 
+Files table columns:
+2025-02-28 10:59:40,089 - INFO - - id: INTEGER
+2025-02-28 10:59:40,089 - INFO - - filename: VARCHAR(200)
+2025-02-28 10:59:40,089 - INFO - - file_path: VARCHAR(500)
+2025-02-28 10:59:40,089 - INFO - - uploaded_at: DATETIME
+2025-02-28 10:59:40,089 - INFO - - user_id: INTEGER
+2025-02-28 10:59:40,092 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:8000
+ * Running on http://10.216.31.207:8000
+2025-02-28 10:59:40,092 - INFO - [33mPress CTRL+C to quit[0m

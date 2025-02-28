@@ -1,6 +1,26 @@
-from flask import Blueprint, render_template, request, flash, redirect, session, url_for, jsonify
-import sqlite3
-from functools import wraps
+'''SQL Injection Prevention:
+
+The code contains some SQL queries with direct user input (e.g., SELECT * FROM users WHERE username = '{username}' AND password_hash = '{password}'), which exposes the app to SQL injection attacks. This is not recommended. Use SQLAlchemy’s ORM methods instead, which are safe from SQL injection.
+Password Hashing in Login Route:
+
+The code checks passwords manually in two places: using User.query.filter_by(username=username).first() and a direct query. Use only the ORM-based method to ensure consistency and security.
+Role-based Authentication:
+
+The check for whether a user is an admin (and whether they are the default admin) is somewhat scattered across different routes. Consider creating a helper function to streamline this logic.
+Response Consistency:
+
+Ensure the response format is consistent, especially in error handling. Use JSON as a uniform response type.
+Logging:
+
+Add logging in critical actions (e.g., user login, password reset) for security and auditing purposes.
+Check for Missing Sessions:
+
+You could refactor code in routes like /admin/add to reduce repetition of session validation.
+Data Validation:
+
+Some fields (like username and password) should undergo validation for length, format, and any additional business rules.'''
+
+from flask import Blueprint, render_template, request, flash, redirect, session, url_for, jsonify, current_app
 from models.user import User
 from models.admin import Admin
 from extensions import db
@@ -26,15 +46,12 @@ def init_admin_db():
         admin_role = Admin.query.filter_by(is_default=True).first()
         
         if not admin_role:
-            admin_role = Admin(
-                user_id=admin_user.id,
-                is_default=True
-            )
+            admin_role = Admin(user_id=admin_user.id, is_default=True)
             db.session.add(admin_role)
             db.session.commit()
-            print("Default admin account created/updated")
+            current_app.logger.info("Default admin account created/updated")
     except Exception as e:
-        print(f"Error initializing admin database: {e}")
+        current_app.logger.error(f"Error initializing admin database: {e}")
         db.session.rollback()
 
 def get_admin_list():
@@ -49,13 +66,15 @@ def get_admin_list():
     
     return admins
 
+def is_admin_logged_in():
+    """Helper function to check if admin is logged in"""
+    return session.get('admin_logged_in', False)
+
 @admin_bp.route("/admin-check")
 def check_admin():
     """Check admin login status - used for AJAX requests"""
-    is_admin = session.get('admin_logged_in', False)
-    if is_admin:
+    if is_admin_logged_in():
         admins = get_admin_list()
-        
         admin_roles = Admin.query.all()
         admin_user_ids = [admin.user_id for admin in admin_roles]
         
@@ -75,14 +94,16 @@ def admin():
         username = request.form.get("username")
         password = request.form.get("password")
         
+        # Use ORM method to fetch the user securely
         user = User.query.filter_by(username=username).first()
+        
         if user and user.check_password(password):
             admin_role = Admin.query.filter_by(user_id=user.id).first()
             
             if admin_role:
                 session['admin_logged_in'] = True
                 session['admin_username'] = username
-                session['is_default_admin'] = (admin_role.is_default == True)
+                session['is_default_admin'] = admin_role.is_default
                 
                 return jsonify({
                     'success': True,
@@ -90,40 +111,19 @@ def admin():
                     'admins': get_admin_list()
                 })
         
-        try:
-            query = f"SELECT * FROM users WHERE username = '{username}' AND password_hash = '{password}'"
-            result = db.session.execute(query)
-            user_data = result.fetchone()
-            
-            if user_data:
-                admin_role = Admin.query.filter_by(user_id=user_data[0]).first()
-                
-                if admin_role:
-                    session['admin_logged_in'] = True
-                    session['admin_username'] = username
-                    session['is_default_admin'] = (admin_role.is_default == True)
-                    
-                    return jsonify({
-                        'success': True,
-                        'is_default_admin': admin_role.is_default,
-                        'admins': get_admin_list()
-                    })
-        except Exception as e:
-            print(f"SQL injection attempt failed: {e}")
-        
         return jsonify({
             'success': False,
             'message': "Invalid admin credentials."
         })
     
     return render_template("admin.html", 
-                         admins=get_admin_list() if session.get('admin_logged_in') else None,
+                         admins=get_admin_list() if is_admin_logged_in() else None,
                          is_default_admin=session.get('is_default_admin', False))
 
 @admin_bp.route("/admin/add", methods=["POST"])
 def add_admin():
     """Add new admin user"""
-    if not session.get('admin_logged_in') or not session.get('is_default_admin'):
+    if not is_admin_logged_in() or not session.get('is_default_admin'):
         return jsonify({'success': False, 'message': "Unauthorized"})
     
     username = request.form.get("username")
@@ -132,8 +132,8 @@ def add_admin():
     if not all([username, password]):
         return jsonify({'success': False, 'message': "Missing credentials"})
     
+    # Ensure username doesn't already exist
     user = User.query.filter_by(username=username).first()
-    
     if not user:
         user = User(username=username)
         user.set_password(password)
@@ -157,7 +157,7 @@ def add_admin():
 @admin_bp.route("/admin/remove/<int:admin_id>", methods=["POST"])
 def remove_admin(admin_id):
     """Remove admin user"""
-    if not session.get('admin_logged_in') or not session.get('is_default_admin'):
+    if not is_admin_logged_in() or not session.get('is_default_admin'):
         return jsonify({'success': False, 'message': "Unauthorized"})
     
     admin = Admin.query.get(admin_id)
@@ -180,24 +180,21 @@ def remove_admin(admin_id):
 @admin_bp.route("/admin/users", methods=["GET"])
 def get_users():
     """Get list of all regular users"""
-    if not session.get('admin_logged_in'):
+    if not is_admin_logged_in():
         return jsonify({'success': False, 'message': "Unauthorized"})
     
     try:
         users = User.query.all()
-        user_list = [{
-            'id': user.id, 
-            'username': user.username
-        } for user in users]
+        user_list = [{'id': user.id, 'username': user.username} for user in users]
         return jsonify({'success': True, 'users': user_list})
     except Exception as e:
-        print(f"Error fetching users: {e}")
+        current_app.logger.error(f"Error fetching users: {e}")
         return jsonify({'success': False, 'message': str(e)})
 
 @admin_bp.route("/admin/users/<int:user_id>", methods=["DELETE"])
 def delete_user(user_id):
     """Delete a user"""
-    if not session.get('admin_logged_in'):
+    if not is_admin_logged_in():
         return jsonify({'success': False, 'message': "Unauthorized"})
     
     try:
@@ -208,14 +205,14 @@ def delete_user(user_id):
             return jsonify({'success': True, 'message': "User deleted successfully"})
         return jsonify({'success': False, 'message': "User not found"})
     except Exception as e:
-        print(f"Error deleting user: {e}")
+        current_app.logger.error(f"Error deleting user: {e}")
         db.session.rollback()
         return jsonify({'success': False, 'message': str(e)})
 
 @admin_bp.route("/admin/users/reset-password", methods=["POST"])
 def reset_password():
     """Reset a user's password"""
-    if not session.get('admin_logged_in'):
+    if not is_admin_logged_in():
         return jsonify({'success': False, 'message': "Unauthorized"})
     
     try:
@@ -229,14 +226,14 @@ def reset_password():
             return jsonify({'success': True, 'message': "Password reset successfully"})
         return jsonify({'success': False, 'message': "User not found"})
     except Exception as e:
-        print(f"Error resetting password: {e}")
+        current_app.logger.error(f"Error resetting password: {e}")
         db.session.rollback()
         return jsonify({'success': False, 'message': str(e)})
 
 @admin_bp.route("/admin/users/add", methods=["POST"])
 def add_user():
     """Add a new regular user"""
-    if not session.get('admin_logged_in'):
+    if not is_admin_logged_in():
         return jsonify({'success': False, 'message': "Unauthorized"})
     
     try:
@@ -257,13 +254,13 @@ def add_user():
             'user': {'id': new_user.id, 'username': new_user.username}
         })
     except Exception as e:
-        print(f"Error adding user: {e}")
+        current_app.logger.error(f"Error adding user: {e}")
         db.session.rollback()
         return jsonify({'success': False, 'message': str(e)})
 
 @admin_bp.route('/admin/logout', methods=['POST'])
 def logout():
-    # gets rid of all admin id on log out 
+    """Logout admin"""
     session.pop('admin_logged_in', None)
     session.pop('admin_username', None)
     session.pop('is_default_admin', None)

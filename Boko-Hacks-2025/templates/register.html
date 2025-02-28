@@ -1,82 +1,214 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
-  <title>Register - BokoHacks</title>
-</head>
-<body>
-  <header>
-    <h1>Register</h1>
-    <nav>
-      <ul>
-        <li><a href="{{ url_for('home.home') }}">Home</a></li>
-        <li><a href="{{ url_for('login.login') }}">Login</a></li>
-        <li><a href="{{ url_for('register.register') }}" class="active">Register</a></li>
-        <li><a href="{{ url_for('about.about') }}">About</a></li>
-      </ul>
-    </nav>
-  </header>
-  <main>
-    {% with messages = get_flashed_messages(with_categories=true) %}
-      {% if messages %}
-        <div class="flash-messages">
-          {% for category, message in messages %}
-            <div class="flash {{ category }}">{{ message }}</div>
-          {% endfor %}
-        </div>
-      {% endif %}
-    {% endwith %}
-    <section>
-      <h2>Create an Account</h2>
-      <p>Sign up to participate in BokoHacks and test your security skills.</p>
-      <form action="{{ url_for('register.register') }}" method="POST">
-        <label for="username">Username:</label>
-        <input type="text" id="username" name="username" placeholder="Choose a username" required>
-        
-        <label for="password">Password:</label>
-        <input type="password" id="password" name="password" placeholder="Create a password" required>
-        
-        <label for="captcha">Enter CAPTCHA:</label>
-        <div class="captcha-box">
-          <img src="{{ url_for('captcha.get_captcha') }}" alt="CAPTCHA" class="captcha-image">
-        </div>
-        <input type="text" id="captcha" name="captcha" placeholder="Enter the text shown above" required>
-        
-        <button type="submit">Register</button>
-      </form>
-      <p>Already have an account? <a href="{{ url_for('login.login') }}">Login here</a>.</p>
-    </section>
-  </main>
-  <footer>
-    <p>&copy; 2025 BokoHacks | All Rights Reserved</p>
-  </footer>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='styles.css') }}"
+    />
+    <title>Register - BokoHacks</title>
+  </head>
+  <body>
+    <header>
+      <h1>Register</h1>
+      <nav>
+        <ul>
+          <li><a href="{{ url_for('home.home') }}">Home</a></li>
+          <li><a href="{{ url_for('login.login') }}">Login</a></li>
+          <li>
+            <a href="{{ url_for('register.register') }}" class="active"
+              >Register</a
+            >
+          </li>
+          <li><a href="{{ url_for('about.about') }}">About</a></li>
+        </ul>
+      </nav>
+    </header>
+    <main>
+      {% with messages = get_flashed_messages(with_categories=true) %} {% if
+      messages %}
+      <div class="flash-messages">
+        {% for category, message in messages %}
+        <div class="flash {{ category }}">{{ message }}</div>
+        {% endfor %}
+      </div>
+      {% endif %} {% endwith %}
+      <section>
+        <h2>Create an Account</h2>
+        <p>
+          Sign up to participate in BokoHacks and test your security skills.
+        </p>
+        <form
+          id="registerForm"
+          action="{{ url_for('register.register') }}"
+          method="POST"
+        >
+          <label for="username">Username:</label>
+          <input
+            type="text"
+            id="username"
+            name="username"
+            placeholder="Choose a username"
+            required
+          />
 
-  <style>
-    .captcha-box {
-      width: 100%;
-      text-align: center;
-      margin: 10px 0;
-      padding: 10px;
-      border: 1px solid #cccccc;
-      border-radius: 4px;
-      background: white;
-    }
-    
-    .captcha-image {
-      max-width: 200px;
-      height: auto;
-    }
-    
-    form input[type="text"]#captcha {
-      width: 100%;
-      padding: 0.75rem;
-      margin-bottom: 1rem;
-      border: 1px solid #cccccc;
-      border-radius: 4px;
-      font-size: 1rem;
-    }
-  </style>
-</body>
+          <label for="password">Password:</label>
+          <input
+            type="password"
+            id="password"
+            name="password"
+            placeholder="Create a password"
+            required
+          />
+
+          <label for="captcha">Flappy Bird for CAPTCHA:</label>
+          <div class="captcha-box">
+            <canvas id="gameCanvas" width="300" height="300"></canvas>
+            <input
+              type="hidden"
+              name="captchaSuccess"
+              id="captchaSuccess"
+              value="0"
+            />
+          </div>
+
+          <button type="submit" id="registerButton" disabled>Register</button>
+        </form>
+        <p>
+          Already have an account?
+          <a href="{{ url_for('login.login') }}">Login here</a>
+        </p>
+      </section>
+    </main>
+    <footer>
+      <p>&copy; 2025 BokoHacks | All Rights Reserved</p>
+    </footer>
+
+    <script>
+      const canvas = document.getElementById("gameCanvas");
+      const ctx = canvas.getContext("2d");
+      const captchaSuccessInput = document.getElementById("captchaSuccess");
+      const registerButton = document.getElementById("registerButton");
+      let gameStarted = false;
+
+      let bird = {
+        x: 50,
+        y: 150,
+        radius: 8,
+        velocity: 0,
+        gravity: 0.1,
+        jump: -3,
+      };
+      let pipes = [],
+        pipeWidth = 50,
+        pipeGap = 170,
+        score = 0,
+        gameRunning = false;
+
+      function drawBird() {
+        ctx.fillStyle = "red";
+        ctx.beginPath();
+        ctx.arc(bird.x, bird.y, bird.radius, 0, Math.PI * 2);
+        ctx.fill();
+      }
+
+      function drawPipes() {
+        ctx.fillStyle = "green";
+        pipes.forEach((pipe) => {
+          ctx.fillRect(pipe.x, 0, pipeWidth, pipe.top);
+          ctx.fillRect(
+            pipe.x,
+            pipe.top + pipeGap,
+            pipeWidth,
+            canvas.height - (pipe.top + pipeGap)
+          );
+        });
+      }
+
+      function updateGame() {
+        if (!gameRunning) return;
+
+        bird.velocity += bird.gravity;
+        bird.y += bird.velocity;
+
+        if (pipes.length < 2) {
+          let topHeight = Math.random() * (canvas.height / 2);
+          let spacing =
+            pipes.length > 0 ? pipes[pipes.length - 1].x + 150 : canvas.width;
+          pipes.push({ x: spacing, top: topHeight, passed: false });
+        }
+
+        pipes.forEach((pipe, index) => {
+          pipe.x -= 2;
+          if (pipe.x + pipeWidth < 0) pipes.splice(index, 1);
+
+          if (
+            bird.x + bird.radius > pipe.x &&
+            bird.x - bird.radius < pipe.x + pipeWidth &&
+            (bird.y - bird.radius < pipe.top ||
+              bird.y + bird.radius > pipe.top + pipeGap)
+          ) {
+            gameRunning = false;
+            alert("Try Again!");
+            resetGame();
+          }
+
+          if (!pipe.passed && pipe.x + pipeWidth < bird.x) {
+            pipe.passed = true;
+            score++;
+            if (score === 2) {
+              gameRunning = false;
+              captchaSuccessInput.value = "1";
+              registerButton.removeAttribute("disabled");
+              alert("CAPTCHA Verified! You can now register.");
+            }
+          }
+        });
+      }
+
+      function drawGame() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        drawBird();
+        drawPipes();
+      }
+
+      function gameLoop() {
+        updateGame();
+        drawGame();
+        if (gameRunning) requestAnimationFrame(gameLoop);
+      }
+
+      function resetGame() {
+        bird.y = 150;
+        bird.velocity = 0;
+        pipes = [];
+        score = 0;
+        gameRunning = false;
+        gameStarted = false;
+        drawGame();
+      }
+
+      document.addEventListener("click", () => {
+        if (!gameStarted) {
+          gameRunning = true;
+          gameStarted = true;
+          gameLoop();
+        }
+        bird.velocity = bird.jump;
+      });
+      document.addEventListener("keydown", (e) => {
+        if (e.code === "Space") {
+          if (!gameStarted) {
+            gameRunning = true;
+            gameStarted = true;
+            gameLoop();
+          }
+          bird.velocity = bird.jump;
+        }
+      });
+
+      drawGame();
+    </script>
+  </body>
 </html>
